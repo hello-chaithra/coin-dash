@@ -60,6 +60,53 @@ scene("game", () => {
     spawnCoin();
   });
 
+    let timeLeft = 30;
+
+  const timerLabel = add([
+    text("Time: 30", { size: 28 }),
+    pos(width() - 20, 20),
+    anchor("topright"),
+  ]);
+
+  loop(1, () => {
+    timeLeft -= 1;
+    timerLabel.text = "Time: " + timeLeft;
+    if (timeLeft <= 0) {
+      go("lose", score);
+    }
+  });
+
+    function spawnEnemy() {
+    add([
+      rect(30, 30),
+      color(255, 70, 70),
+      pos(rand(50, width() - 50), rand(100, height() - 50)),
+      anchor("center"),
+      area(),
+      { vx: choose([-150, 150]) },
+      "enemy",
+    ]);
+  }
+
+  for (let i = 0; i < 3; i++) {
+    spawnEnemy();
+  }
+
+  onUpdate("enemy", (e) => {
+    e.move(e.vx, 0);
+    if (e.pos.x < 20 || e.pos.x > width() - 20) {
+      e.vx = -e.vx; // bounce off the walls
+    }
+  });
+
+  player.onCollide("enemy", (e) => {
+    shake(12);
+    timeLeft -= 5;
+    timerLabel.text = "Time: " + timeLeft;
+    destroy(e);
+    spawnEnemy();
+  });
+
   player.onUpdate(() => {
     player.pos.x = clamp(player.pos.x, 16, width() - 16);
     player.pos.y = clamp(player.pos.y, 16, height() - 16);
