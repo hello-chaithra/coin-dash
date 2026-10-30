@@ -113,4 +113,48 @@ scene("game", () => {
   });
 });
 
-go("game");
+scene("menu", () => {
+  add([
+    text("COIN DASH", { size: 64 }),
+    pos(width() / 2, 200),
+    anchor("center"),
+  ]);
+
+  add([
+    text("Collect coins. Avoid red squares.\n\nPress SPACE to start", {
+      size: 24,
+      align: "center",
+    }),
+    pos(width() / 2, 360),
+    anchor("center"),
+  ]);
+
+  onKeyPress("space", () => go("game"));
+});
+
+scene("lose", (finalScore) => {
+  const best = getData("best", 0);
+  if (finalScore > best) {
+    setData("best", finalScore);
+  }
+
+  add([
+    text("Game Over", { size: 56 }),
+    pos(width() / 2, 180),
+    anchor("center"),
+  ]);
+
+  add([
+    text(
+      "Score: " + finalScore + "\nBest: " + Math.max(best, finalScore) +
+        "\n\nPress SPACE to play again",
+      { size: 28, align: "center" }
+    ),
+    pos(width() / 2, 340),
+    anchor("center"),
+  ]);
+
+  onKeyPress("space", () => go("game"));
+});
+
+go("menu");
