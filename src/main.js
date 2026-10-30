@@ -29,6 +29,37 @@ scene("game", () => {
   onKeyDown("w", () => player.move(0, -SPEED));
   onKeyDown("s", () => player.move(0, SPEED));
 
+    let score = 0;
+
+  const scoreLabel = add([
+    text("Score: 0", { size: 28 }),
+    pos(20, 20),
+  ]);
+
+  function spawnCoin() {
+    add([
+      circle(10),
+      color(255, 215, 0),
+      pos(rand(30, width() - 30), rand(80, height() - 30)),
+      anchor("center"),
+      area(),
+      "coin",
+    ]);
+  }
+
+  // Start with 5 coins
+  for (let i = 0; i < 5; i++) {
+    spawnCoin();
+  }
+
+  player.onCollide("coin", (coin) => {
+    destroy(coin);
+    score += 1;
+    scoreLabel.text = "Score: " + score;
+    burp(); // built-in sound effect
+    spawnCoin();
+  });
+
   player.onUpdate(() => {
     player.pos.x = clamp(player.pos.x, 16, width() - 16);
     player.pos.y = clamp(player.pos.y, 16, height() - 16);
